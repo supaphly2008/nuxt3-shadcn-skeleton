@@ -68,14 +68,14 @@
           class="fixed inset-0 z-40 bg-black/40 lg:hidden"
           @click.self="open = false"
         >
-          <aside class="absolute inset-y-0 left-0 w-80 bg-background border-r p-4 shadow-xl">
+          <aside class="absolute inset-y-0 left-0 w-80 border-r bg-background p-4 shadow-xl">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <LogoMark />
                 <span class="font-semibold">Nuxt Layout</span>
               </div>
               <button
-                class="h-8 w-8 inline-flex items-center justify-center rounded-md border"
+                class="inline-flex h-8 w-8 items-center justify-center rounded-md border"
                 @click="open = false"
                 aria-label="Close"
               >

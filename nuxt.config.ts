@@ -28,5 +28,11 @@ export default defineNuxtConfig({
         { name: 'color-scheme', content: 'light dark' }
       ]
     }
+  },
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {}
+    }
   }
 })

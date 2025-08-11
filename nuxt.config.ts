@@ -6,6 +6,13 @@ const rootDir = fileURLToPath(new URL('.', import.meta.url))
 export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss', '@nuxtjs/color-mode'],
   css: [join(rootDir, 'assets/css/tailwind.css')],
+  components: [
+    {
+      path: '~/components',
+      pathPrefix: false,
+      extensions: ['vue'] // <-- ignore .ts so index.ts won't register
+    }
+  ],
   typescript: { strict: true, typeCheck: true },
   colorMode: {
     classSuffix: '',

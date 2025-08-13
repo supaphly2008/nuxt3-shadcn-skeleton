@@ -1,6 +1,6 @@
 <template>
   <button
-    class="inline-flex items-center gap-2 rounded-md border px-3 h-9 text-sm hover:bg-muted"
+    class="inline-flex h-9 items-center gap-2 rounded-md border px-3 text-sm hover:bg-muted"
     @click="cycle"
   >
     <span v-if="value === 'light'">🌞</span>
@@ -12,6 +12,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import { useColorMode } from '#imports'
 
 type Mode = 'light' | 'dark' | 'system'

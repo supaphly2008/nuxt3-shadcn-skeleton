@@ -47,7 +47,7 @@ const onOpenChange = (val: boolean) => {
           <div class="mx-4 flex h-14 items-center gap-3">
             <!-- opens/closes the off-canvas sidebar on mobile -->
             <SidebarTrigger
-              class="inline-flex h-9 w-9 items-center justify-center rounded-md border lg:hidden"
+              class="inline-flex h-9 w-9 items-center justify-center rounded-md border"
             />
             <NuxtLink to="/" class="font-semibold">Nuxt Layout</NuxtLink>
             <div class="ml-auto flex items-center gap-2">

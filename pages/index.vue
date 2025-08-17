@@ -44,7 +44,7 @@
             <FileUploader @fileSelected="handleFileChange" />
           </div>
 
-          <div class="flex justify-end">
+          <div class="flex">
             <Button
               @click="isPreviewFileOpen = true"
               :disabled="isExtractingFile || !file"
@@ -103,7 +103,7 @@
             <div class="text-gray-400">
               <p class="flex items-center gap-2 text-lg font-medium">
                 <span :class="isExtractingFile ? 'animate-spin' : ''">⌛️</span>
-                Click to extract data
+                {{ isExtractingFile ? 'Extracting data...' : 'Click to extract data' }}
               </p>
               <p v-if="file" class="overflow-hidden text-ellipsis text-sm font-semibold text-white">
                 {{ file.name }}
@@ -111,7 +111,7 @@
             </div>
           </div>
 
-          <div class="flex justify-end">
+          <div class="flex">
             <Button
               @click="isFormOpen = true"
               :disabled="!isDataExtracted || !file"
@@ -154,170 +154,36 @@
       </StepperItem>
     </Stepper>
 
-    <Button @click="generateDoc">Generate</Button>
+    <Button @click="generateDoc" class="mt-6">Generate Document</Button>
 
-    <!-- preview pdf dialog -->
-    <FilePreviewDialog v-model:open="isPreviewFileOpen" :fileUrl="fileUrl" />
+    <!-- Error/Success Messages -->
+    <div v-if="error" class="mt-4 rounded border border-red-400 bg-red-100 p-3 text-red-700">
+      {{ error }}
+    </div>
 
-    <!-- form dialog -->
-    <Dialog v-model:open="isFormOpen">
-      <DialogContent class="max-w-screen h-full rounded-none md:h-[90%] md:w-[800px]">
-        <div class="relative flex h-full w-full flex-col overflow-scroll pt-4">
-          <!-- form with extracted data -->
-          <form class="flex flex-col gap-8" @submit="onSubmit">
-            <FormField v-slot="{ componentField }" name="buyerName">
-              <FormItem>
-                <FormLabel>Buyer Name</FormLabel>
-                <FormControl>
-                  <Input class="bg-primary" type="text" v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
+    <div
+      v-if="message"
+      class="mt-4 rounded border border-green-400 bg-green-100 p-3 text-green-700"
+    >
+      {{ message }}
+    </div>
 
-            <FormField v-slot="{ componentField }" name="buyerEmail">
-              <FormItem>
-                <FormLabel>Buyer Email</FormLabel>
-                <FormControl>
-                  <Input type="email" v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
+    <!-- Dialogs -->
+    <FilePreviewDialog v-model:open="isPreviewFileOpen" :file-url="fileUrl" />
 
-            <FormField v-slot="{ componentField }" name="buyerAddress">
-              <FormItem>
-                <FormLabel>Buyer Address</FormLabel>
-                <FormControl>
-                  <Textarea v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField v-slot="{ componentField }" name="sellerName">
-              <FormItem>
-                <FormLabel>Seller Name</FormLabel>
-                <FormControl>
-                  <Input type="text" v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField v-slot="{ componentField }" name="SellerAddress">
-              <FormItem>
-                <FormLabel>Seller Address</FormLabel>
-                <FormControl>
-                  <Textarea v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField v-slot="{ componentField }" name="contractNumber">
-              <FormItem>
-                <FormLabel>Contract No.</FormLabel>
-                <FormControl>
-                  <Input type="text" v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField v-slot="{ componentField }" name="product">
-              <FormItem>
-                <FormLabel>Product</FormLabel>
-                <FormControl>
-                  <Input type="text" v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField v-slot="{ componentField }" name="quantity">
-              <FormItem>
-                <FormLabel>Quantity</FormLabel>
-                <FormControl>
-                  <Input type="text" v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField v-slot="{ componentField }" name="unitPrice">
-              <FormItem>
-                <FormLabel>Unit Price</FormLabel>
-                <FormControl>
-                  <Input type="text" v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField v-slot="{ componentField }" name="totalAmount">
-              <FormItem>
-                <FormLabel>Total Amount</FormLabel>
-                <FormControl>
-                  <Input type="text" v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField v-slot="{ componentField }" name="origin">
-              <FormItem>
-                <FormLabel>Origin</FormLabel>
-                <FormControl>
-                  <Input type="text" v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField v-slot="{ componentField }" name="destination">
-              <FormItem>
-                <FormLabel>Destination</FormLabel>
-                <FormControl>
-                  <Input type="text" v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField v-slot="{ componentField }" name="insurance">
-              <FormItem>
-                <FormLabel>Insurance</FormLabel>
-                <FormControl>
-                  <Input type="text" v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <!-- sticky-ish footer (inside the form!) -->
-            <div class="sticky bottom-0 flex justify-end gap-4 border-t bg-background py-4">
-              <Button
-                class="w-[100px] cursor-pointer bg-secondary text-white hover:bg-secondary/70"
-                @click="isPreviewFileOpen = true"
-                >預覽檔案</Button
-              >
-              <Button class="w-[100px] cursor-pointer text-white" type="submit">儲存</Button>
-            </div>
-          </form>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <ContractFormDialog
+      v-model:open="isFormOpen"
+      :form="form"
+      @submit="handleFormSubmit"
+      @preview-file="openPreviewDialog"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { onUnmounted, ref } from 'vue'
 
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
 import {
   Stepper,
   StepperDescription,
@@ -326,21 +192,60 @@ import {
   StepperTitle,
   StepperTrigger
 } from '@/components/ui/stepper'
-import { Textarea } from '@/components/ui/textarea'
 import { toTypedSchema } from '@vee-validate/zod'
 import { Check, Circle, Dot } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import * as z from 'zod'
 import FileUploader from '~/components/FileUploader.vue'
+import ContractFormDialog from '~/components/contract/ContractFormDialog.vue'
 import FilePreviewDialog from '~/components/contract/FilePreviewDialog.vue'
 import { extractPdfData } from '~/utils/api/pdf'
 
+// Enums and Types
 enum StepIndexEnum {
   UploadFile = 1,
   ExtractData = 2,
   ReviewAndSubmit = 3
 }
 
+interface ContractFormData {
+  buyerName?: string
+  buyerAddress?: string
+  buyerEmail?: string
+  sellerName?: string
+  sellerAddress?: string
+  product?: string
+  quantity?: string
+  unitPrice?: string
+  totalAmount?: string | null
+  origin?: string
+  destination?: string
+  insurance?: string
+  incoterms?: string
+  cropYear?: string
+  paymentTerms?: string
+  shipmentPeriod?: string
+  contractNumber?: string
+  contractDate?: string
+  commission?: string
+  packaging?: string
+  documentsRequired?: string | null
+  EORINumber?: string
+  specialNotes?: string
+  bankDetails?: {
+    beneficiary?: string
+    accountNo?: string | null
+    bank?: string
+    swift?: string | null
+  }
+}
+
+interface GenerateDocResponse {
+  downloadUrl?: string
+  [key: string]: any
+}
+
+// Form Schema
 const formSchema = toTypedSchema(
   z.object({
     buyerName: z.string().optional(),
@@ -366,7 +271,6 @@ const formSchema = toTypedSchema(
     documentsRequired: z.string().nullable().optional(),
     EORINumber: z.string().optional(),
     specialNotes: z.string().optional(),
-
     bankDetails: z
       .object({
         beneficiary: z.string().optional(),
@@ -378,78 +282,103 @@ const formSchema = toTypedSchema(
   })
 )
 
+// Reactive State
+const file = ref<File | null>(null)
+const fileUrl = ref<string | null>(null)
+const isExtractingFile = ref(false)
+const isDataExtracted = ref(false)
+const stepIndex = ref(StepIndexEnum.UploadFile)
+const error = ref('')
+const message = ref('')
+const isPreviewFileOpen = ref(false)
+const isFormOpen = ref(false)
+
+// Form setup
 const form = useForm({
   validationSchema: formSchema
 })
 
 const { setValues } = form
 
-const file = ref<File | null>(null)
-const fileUrl = ref<string | null>(null)
-const isExtractingFile = ref(false)
-const message = ref('')
-const error = ref('')
-const isPreviewFileOpen = ref(false)
-const isFormOpen = ref(false)
-const isDataExtracted = ref(false)
-const stepIndex = ref(StepIndexEnum.UploadFile)
-
+// Event Handlers
 const handleFileChange = (selectedFile: File) => {
   file.value = selectedFile || null
   fileUrl.value = selectedFile ? URL.createObjectURL(selectedFile) : null
   stepIndex.value = StepIndexEnum.ExtractData
+
+  // Reset extraction state
+  isDataExtracted.value = false
+  error.value = ''
+  message.value = ''
 }
 
 const extractData = async () => {
-  error.value = ''
-  message.value = ''
-
-  if (!file.value) {
-    error.value = 'Please select a file'
+  if (stepIndex.value !== StepIndexEnum.ExtractData || !file.value) {
+    error.value = 'Please select a file first'
     return
   }
 
-  isExtractingFile.value = true
-  const { data, error: uploadError } = await extractPdfData({ file: file.value })
-  isExtractingFile.value = false
+  try {
+    error.value = ''
+    message.value = ''
+    isExtractingFile.value = true
 
-  if (uploadError.value) {
-    error.value = uploadError?.value?.message || 'An unknown error occurred'
-  } else {
-    console.log('data success', data.value)
-    if (data.value) {
+    const { data, error: uploadError } = await extractPdfData({ file: file.value })
+
+    if (uploadError.value) {
+      error.value = uploadError.value?.message || 'An unknown error occurred'
+    } else if (data.value) {
+      console.log('Data extraction successful:', data.value)
       isDataExtracted.value = true
       setValues(data.value)
+      stepIndex.value = StepIndexEnum.ReviewAndSubmit
+      message.value = 'Data extracted successfully!'
     }
+  } catch (err) {
+    error.value = 'Failed to extract data from file'
+    console.error('Extraction error:', err)
+  } finally {
+    isExtractingFile.value = false
   }
-}
-
-type GenerateDocResponse = {
-  downloadUrl?: string
-  [key: string]: any
 }
 
 const generateDoc = async () => {
-  const { data } = await useFetch<GenerateDocResponse>('http://localhost:3001/generate-doc', {
-    method: 'POST',
-    body: {
-      invoiceNo: 'TG25014',
-      date: 'MAY.14.2025',
-      marks: 'N/M',
-      desc: 'Your product description here...'
+  try {
+    const { data } = await useFetch<GenerateDocResponse>('http://localhost:3001/generate-doc', {
+      method: 'POST',
+      body: {
+        invoiceNo: 'TG25014',
+        date: 'MAY.14.2025',
+        marks: 'N/M',
+        desc: 'Your product description here...'
+      }
+    })
+
+    if (data.value?.downloadUrl) {
+      window.open(`http://localhost:3001${data.value.downloadUrl}`, '_blank')
+      message.value = 'Document generated successfully!'
     }
-  })
-
-  if (data.value?.downloadUrl) {
-    window.open(`http://localhost:3001${data.value.downloadUrl}`, '_blank')
+  } catch (err) {
+    console.error('Failed to generate document:', err)
+    error.value = 'Failed to generate document'
   }
-
-  console.log('data', data.value)
 }
 
-const onSubmit = form.handleSubmit(values => {
-  console.log('Form submitted!', values)
+const handleFormSubmit = (values: ContractFormData) => {
+  console.log('Form submitted:', values)
+  message.value = 'Contract details saved successfully!'
+  isFormOpen.value = false
+  // Add your form submission logic here
+}
+
+const openPreviewDialog = () => {
+  isPreviewFileOpen.value = true
+}
+
+// Cleanup
+onUnmounted(() => {
+  if (fileUrl.value) {
+    URL.revokeObjectURL(fileUrl.value)
+  }
 })
 </script>
-
-<style></style>

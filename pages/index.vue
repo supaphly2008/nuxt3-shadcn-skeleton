@@ -157,13 +157,7 @@
     <Button @click="generateDoc">Generate</Button>
 
     <!-- preview pdf dialog -->
-    <Dialog v-model:open="isPreviewFileOpen">
-      <DialogContent class="max-w-screen h-full rounded-none md:h-[90%] md:w-[800px]">
-        <div class="relative flex h-full w-full flex-col overflow-hidden py-4">
-          <PdfViewer v-if="fileUrl" :source="fileUrl" />
-        </div>
-      </DialogContent>
-    </Dialog>
+    <FilePreviewDialog v-model:open="isPreviewFileOpen" :fileUrl="fileUrl" />
 
     <!-- form dialog -->
     <Dialog v-model:open="isFormOpen">
@@ -338,6 +332,7 @@ import { Check, Circle, Dot } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import * as z from 'zod'
 import FileUploader from '~/components/FileUploader.vue'
+import FilePreviewDialog from '~/components/contract/FilePreviewDialog.vue'
 import { extractPdfData } from '~/utils/api/pdf'
 
 enum StepIndexEnum {

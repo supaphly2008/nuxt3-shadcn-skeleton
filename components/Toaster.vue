@@ -55,13 +55,17 @@ const getToastVariant = (variant: string | undefined): 'default' | 'destructive'
   }
 }
 
-// Add custom styling for success and warning variants
+// Add custom styling for all toast variants using CSS variables
 const getToastClass = (variant: string | undefined): string => {
   switch (variant) {
     case 'success':
-      return 'border-green-200 bg-green-50 text-green-900 dark:border-green-800 dark:bg-green-950 dark:text-green-50'
+      return 'border-[hsl(var(--success-border))] bg-[hsl(var(--success-background))] text-[hsl(var(--success-foreground))] [&_[data-description]]:text-[hsl(var(--success-foreground))]'
     case 'warning':
-      return 'border-yellow-200 bg-yellow-50 text-yellow-900 dark:border-yellow-800 dark:bg-yellow-950 dark:text-yellow-50'
+      return 'border-[hsl(var(--warning-border))] bg-[hsl(var(--warning-background))] text-[hsl(var(--warning-foreground))] [&_[data-description]]:text-[hsl(var(--warning-foreground))]'
+    case 'error':
+      return 'border-[hsl(var(--error-border))] bg-[hsl(var(--error-background))] text-[hsl(var(--error-foreground))] [&_[data-description]]:text-[hsl(var(--error-foreground))]'
+    case 'info':
+      return 'border-[hsl(var(--info-border))] bg-[hsl(var(--info-background))] text-[hsl(var(--info-foreground))] [&_[data-description]]:text-[hsl(var(--info-foreground))]'
     default:
       return ''
   }

@@ -37,7 +37,29 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Toast Colors - Light and easy on the eyes */
+    --success: 142 76% 36%;
+    --success-foreground: 138 76% 12%;
+    --success-background: 143 85% 96%;
+    --success-border: 145 92% 91%;
+
+    --info: 213 94% 68%;
+    --info-foreground: 213 94% 20%;
+    --info-background: 214 100% 97%;
+    --info-border: 213 97% 87%;
+
+    --warning: 45 93% 47%;
+    --warning-foreground: 31 92% 28%;
+    --warning-background: 48 100% 96%;
+    --warning-border: 48 96% 89%;
+
+    --error: 0 84% 60%;
+    --error-foreground: 0 0% 98%;
+    --error-background: 0 93% 94%;
+    --error-border: 0 93% 89%;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -71,6 +93,27 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Toast Colors for Dark Mode - Softer and easier on the eyes */
+    --success: 142 69% 58%;
+    --success-foreground: 143 85% 96%;
+    --success-background: 142 76% 6%;
+    --success-border: 142 76% 12%;
+
+    --info: 213 94% 68%;
+    --info-foreground: 214 100% 97%;
+    --info-background: 213 94% 6%;
+    --info-border: 213 94% 15%;
+
+    --warning: 45 93% 58%;
+    --warning-foreground: 48 100% 96%;
+    --warning-background: 45 93% 6%;
+    --warning-border: 45 93% 15%;
+
+    --error: 0 84% 60%;
+    --error-foreground: 0 0% 98%;
+    --error-background: 0 93% 7%;
+    --error-border: 0 93% 15%;
   }
 }
 

@@ -329,6 +329,7 @@ const extractData = async () => {
   }
 }
 
+// Generate Document
 const generateDoc = async () => {
   try {
     const { data } = await useFetch<GenerateDocResponse>('http://localhost:3001/generate-doc', {
@@ -352,6 +353,7 @@ const generateDoc = async () => {
   }
 }
 
+// save form data, pdf and documents
 const handleFormSubmit = (values: ContractFormData) => {
   console.log('Form submitted:', values)
   toast.success('Contract details saved successfully!')

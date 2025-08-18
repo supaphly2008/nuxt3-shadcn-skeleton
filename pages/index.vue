@@ -100,12 +100,15 @@
             class="flex h-[100px] flex-col items-center justify-center rounded-md border-2 border-gray-600 bg-secondary p-6 text-center transition-colors hover:bg-secondary/80"
             @click="extractData"
           >
-            <div class="text-gray-400">
+            <div class="text-muted-foreground">
               <p class="flex items-center gap-2 text-lg font-medium">
                 <span :class="isExtractingFile ? 'animate-spin' : ''">⌛️</span>
                 {{ isExtractingFile ? 'Extracting data...' : 'Click to extract data' }}
               </p>
-              <p v-if="file" class="overflow-hidden text-ellipsis text-sm font-semibold text-white">
+              <p
+                v-if="file"
+                class="overflow-hidden text-ellipsis text-sm font-semibold text-gray-400"
+              >
                 {{ file.name }}
               </p>
             </div>
@@ -156,18 +159,6 @@
 
     <Button @click="generateDoc" class="mt-6">Generate Document</Button>
 
-    <!-- Error/Success Messages -->
-    <div v-if="error" class="mt-4 rounded border border-red-400 bg-red-100 p-3 text-red-700">
-      {{ error }}
-    </div>
-
-    <div
-      v-if="message"
-      class="mt-4 rounded border border-green-400 bg-green-100 p-3 text-green-700"
-    >
-      {{ message }}
-    </div>
-
     <!-- Dialogs -->
     <FilePreviewDialog v-model:open="isPreviewFileOpen" :file-url="fileUrl" />
 
@@ -192,6 +183,7 @@ import {
   StepperTitle,
   StepperTrigger
 } from '@/components/ui/stepper'
+import { useToast } from '@/composables/useToast'
 import { toTypedSchema } from '@vee-validate/zod'
 import { Check, Circle, Dot } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
@@ -200,6 +192,8 @@ import FileUploader from '~/components/FileUploader.vue'
 import ContractFormDialog from '~/components/contract/ContractFormDialog.vue'
 import FilePreviewDialog from '~/components/contract/FilePreviewDialog.vue'
 import { extractPdfData } from '~/utils/api/pdf'
+
+const { toast } = useToast()
 
 // Enums and Types
 enum StepIndexEnum {
@@ -288,8 +282,6 @@ const fileUrl = ref<string | null>(null)
 const isExtractingFile = ref(false)
 const isDataExtracted = ref(false)
 const stepIndex = ref(StepIndexEnum.UploadFile)
-const error = ref('')
-const message = ref('')
 const isPreviewFileOpen = ref(false)
 const isFormOpen = ref(false)
 
@@ -308,34 +300,29 @@ const handleFileChange = (selectedFile: File) => {
 
   // Reset extraction state
   isDataExtracted.value = false
-  error.value = ''
-  message.value = ''
 }
 
 const extractData = async () => {
   if (stepIndex.value !== StepIndexEnum.ExtractData || !file.value) {
-    error.value = 'Please select a file first'
+    toast.error('Please select a file first')
     return
   }
 
   try {
-    error.value = ''
-    message.value = ''
     isExtractingFile.value = true
 
     const { data, error: uploadError } = await extractPdfData({ file: file.value })
 
     if (uploadError.value) {
-      error.value = uploadError.value?.message || 'An unknown error occurred'
+      toast.error('Failed to extract data from file')
     } else if (data.value) {
-      console.log('Data extraction successful:', data.value)
+      toast.success('Data extracted successfully!')
       isDataExtracted.value = true
       setValues(data.value)
       stepIndex.value = StepIndexEnum.ReviewAndSubmit
-      message.value = 'Data extracted successfully!'
     }
   } catch (err) {
-    error.value = 'Failed to extract data from file'
+    toast.error('Failed to extract data from file')
     console.error('Extraction error:', err)
   } finally {
     isExtractingFile.value = false
@@ -347,6 +334,7 @@ const generateDoc = async () => {
     const { data } = await useFetch<GenerateDocResponse>('http://localhost:3001/generate-doc', {
       method: 'POST',
       body: {
+        // TODO: Dummy data for demonstration
         invoiceNo: 'TG25014',
         date: 'MAY.14.2025',
         marks: 'N/M',
@@ -356,19 +344,19 @@ const generateDoc = async () => {
 
     if (data.value?.downloadUrl) {
       window.open(`http://localhost:3001${data.value.downloadUrl}`, '_blank')
-      message.value = 'Document generated successfully!'
+      toast.success('Document generated successfully!')
     }
   } catch (err) {
     console.error('Failed to generate document:', err)
-    error.value = 'Failed to generate document'
+    toast.error('Failed to generate document')
   }
 }
 
 const handleFormSubmit = (values: ContractFormData) => {
   console.log('Form submitted:', values)
-  message.value = 'Contract details saved successfully!'
+  toast.success('Contract details saved successfully!')
   isFormOpen.value = false
-  // Add your form submission logic here
+  // TODO: Add your form submission logic here
 }
 
 const openPreviewDialog = () => {

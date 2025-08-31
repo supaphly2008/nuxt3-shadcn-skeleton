@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto max-w-6xl space-y-6">
+  <div class="mx-auto max-w-4xl space-y-6">
     <!-- Calendar Header -->
     <section class="space-y-2">
       <h1 class="text-2xl font-semibold">Calendar</h1>
@@ -7,87 +7,93 @@
     </section>
 
     <!-- Calendar Controls -->
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <Button variant="outline" size="sm" @click="previousMonth">
-          <ChevronLeft class="h-4 w-4" />
-        </Button>
-        <h2 class="text-xl font-medium">{{ currentMonthYear }}</h2>
-        <Button variant="outline" size="sm" @click="nextMonth">
-          <ChevronRight class="h-4 w-4" />
-        </Button>
-        <Button variant="outline" size="sm" @click="goToToday"> Today </Button>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <Button
-          v-for="view in views"
-          :key="view.key"
-          :variant="currentView === view.key ? 'default' : 'outline'"
-          size="sm"
-          @click="currentView = view.key"
-        >
-          {{ view.label }}
-        </Button>
-      </div>
-    </div>
-
-    <!-- Calendar Grid -->
-    <div class="rounded-lg border">
-      <!-- Calendar Header -->
-      <div class="grid grid-cols-7 border-b bg-muted/50">
-        <div v-for="day in weekDays" :key="day" class="p-3 text-center text-sm font-medium">
-          {{ day }}
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <Button variant="outline" size="sm" @click="previousMonth">
+            <ChevronLeft class="h-4 w-4" />
+          </Button>
+          <h2 class="text-xl font-medium">{{ currentMonthYear }}</h2>
+          <Button variant="outline" size="sm" @click="nextMonth">
+            <ChevronRight class="h-4 w-4" />
+          </Button>
+          <Button variant="outline" size="sm" @click="goToToday"> Today </Button>
         </div>
-      </div>
 
-      <!-- Calendar Days -->
-      <div class="grid grid-cols-7">
-        <div
-          v-for="day in calendarDays"
-          :key="day.date"
-          class="relative min-h-[120px] border-b border-r p-2"
-          :class="{
-            'bg-muted/30': !day.isCurrentMonth,
-            'bg-blue-50 dark:bg-blue-950/20': day.isToday
-          }"
-        >
-          <!-- Day Number -->
-          <div class="mb-1 text-sm font-medium">
-            {{ day.dayNumber }}
-          </div>
-
-          <!-- Events -->
-          <div class="space-y-1">
-            <div
-              v-for="event in getEventsForDay(day.date)"
-              :key="event.id"
-              class="cursor-pointer rounded p-1 text-xs transition-colors"
-              :class="getEventColor(event.type)"
-              @click="selectEvent(event)"
-            >
-              <div class="truncate font-medium">{{ event.title }}</div>
-              <div class="text-xs opacity-75">{{ event.time }}</div>
-            </div>
-          </div>
-
-          <!-- Add Event Button -->
+        <div class="flex items-center gap-2">
           <Button
-            v-if="day.isCurrentMonth"
-            variant="ghost"
+            v-for="view in views"
+            :key="view.key"
+            :variant="currentView === view.key ? 'default' : 'outline'"
             size="sm"
-            class="absolute bottom-1 right-1 h-6 w-6 p-0 opacity-0 transition-opacity hover:opacity-100"
-            @click="addEvent(day.date)"
+            @click="currentView = view.key"
           >
-            <Plus class="h-3 w-3" />
+            {{ view.label }}
           </Button>
         </div>
       </div>
-    </div>
+
+      <!-- Calendar Grid -->
+      <div class="rounded-lg border">
+        <!-- Calendar Header -->
+        <div class="grid grid-cols-7 border-b bg-muted/50">
+          <div v-for="day in weekDays" :key="day" class="p-3 text-center text-sm font-medium">
+            {{ day }}
+          </div>
+        </div>
+
+        <!-- Calendar Days -->
+        <div class="grid grid-cols-7">
+          <div
+            v-for="day in calendarDays"
+            :key="day.date"
+            class="relative min-h-[120px] border-b border-r p-2"
+            :class="{
+              'bg-muted/30': !day.isCurrentMonth,
+              'bg-blue-50 dark:bg-blue-950/20': day.isToday
+            }"
+          >
+            <!-- Day Number -->
+            <div class="mb-1 text-sm font-medium">
+              {{ day.dayNumber }}
+            </div>
+
+            <!-- Events -->
+            <div class="space-y-1">
+              <div
+                v-for="event in getEventsForDay(day.date)"
+                :key="event.id"
+                class="cursor-pointer rounded p-1 text-xs transition-colors"
+                :class="getEventColor(event.type)"
+                @click="selectEvent(event)"
+              >
+                <div class="truncate font-medium">{{ event.title }}</div>
+                <div class="text-xs opacity-75">{{ event.time }}</div>
+              </div>
+            </div>
+
+            <!-- Add Event Button -->
+            <Button
+              v-if="day.isCurrentMonth"
+              variant="ghost"
+              size="sm"
+              class="absolute bottom-1 right-1 h-6 w-6 p-0 opacity-0 transition-opacity hover:opacity-100"
+              @click="addEvent(day.date)"
+            >
+              <Plus class="h-3 w-3" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- Upcoming Events -->
     <section class="space-y-4">
-      <h3 class="text-lg font-medium">Upcoming Events</h3>
+      <div class="space-y-2">
+        <h2 class="text-xl font-medium">Upcoming Events</h2>
+        <p class="text-sm text-muted-foreground">Your next scheduled events and deadlines.</p>
+      </div>
+
       <div class="grid gap-3">
         <div
           v-for="event in upcomingEvents"

@@ -1,50 +1,59 @@
 <template>
-  <div class="mx-auto max-w-4xl">
-    <Stepper
-      orientation="vertical"
-      class="flex w-full flex-col justify-start gap-10"
-      v-model="stepIndex"
-    >
-      <!-- Upload File Step -->
-      <ContractStepperItem
-        :step="StepIndexEnum.UploadFile"
-        title="Upload File"
-        description="Click to upload a PDF file containing the contract details. We will extract the data for you."
+  <div class="mx-auto max-w-4xl space-y-6">
+    <!-- Page Header -->
+    <section class="space-y-2">
+      <h1 class="text-2xl font-semibold">Contract Processing</h1>
+      <p class="text-muted-foreground">Upload and process your contract documents.</p>
+    </section>
+
+    <!-- Contract Workflow -->
+    <section class="space-y-6">
+      <Stepper
+        orientation="vertical"
+        class="flex w-full flex-col justify-start gap-10"
+        v-model="stepIndex"
       >
-        <FileUploadStep
-          :file="file"
-          :is-extracting-file="isExtractingFile"
-          @file-selected="handleFileChange"
-          @preview-file="openPreviewDialog"
+        <!-- Upload File Step -->
+        <ContractStepperItem
+          :step="StepIndexEnum.UploadFile"
+          title="Upload File"
+          description="Click to upload a PDF file containing the contract details. We will extract the data for you."
+        >
+          <FileUploadStep
+            :file="file"
+            :is-extracting-file="isExtractingFile"
+            @file-selected="handleFileChange"
+            @preview-file="openPreviewDialog"
+          />
+        </ContractStepperItem>
+
+        <!-- Extract Data Step -->
+        <ContractStepperItem
+          :step="StepIndexEnum.ExtractData"
+          title="Extract Data"
+          description="Click to extract data from the uploaded file."
+        >
+          <DataExtractionStep
+            :file="file"
+            :is-extracting-file="isExtractingFile"
+            :is-data-extracted="isDataExtracted"
+            :is-disabled="stepIndex === StepIndexEnum.UploadFile"
+            @extract-data="extractData"
+            @preview-form="openFormDialog"
+          />
+        </ContractStepperItem>
+
+        <!-- Submit Step -->
+        <ContractStepperItem
+          :step="StepIndexEnum.ReviewAndSubmit"
+          title="Submit"
+          description="Submit the contract details after reviewing the extracted data."
+          :show-separator="false"
         />
-      </ContractStepperItem>
+      </Stepper>
 
-      <!-- Extract Data Step -->
-      <ContractStepperItem
-        :step="StepIndexEnum.ExtractData"
-        title="Extract Data"
-        description="Click to extract data from the uploaded file."
-      >
-        <DataExtractionStep
-          :file="file"
-          :is-extracting-file="isExtractingFile"
-          :is-data-extracted="isDataExtracted"
-          :is-disabled="stepIndex === StepIndexEnum.UploadFile"
-          @extract-data="extractData"
-          @preview-form="openFormDialog"
-        />
-      </ContractStepperItem>
-
-      <!-- Submit Step -->
-      <ContractStepperItem
-        :step="StepIndexEnum.ReviewAndSubmit"
-        title="Submit"
-        description="Submit the contract details after reviewing the extracted data."
-        :show-separator="false"
-      />
-    </Stepper>
-
-    <Button @click="generateDoc" class="mt-6">Generate Document</Button>
+      <Button @click="generateDoc" class="mt-6">Generate Document</Button>
+    </section>
 
     <!-- Dialogs -->
     <FilePreviewDialog v-model:open="isPreviewFileOpen" :file-url="fileUrl" />

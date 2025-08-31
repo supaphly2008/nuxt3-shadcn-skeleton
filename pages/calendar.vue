@@ -6,89 +6,19 @@
       <p class="text-muted-foreground">Manage your schedule and events.</p>
     </section>
 
-    <!-- Calendar Controls -->
+    <!-- Custom Calendar -->
     <section class="space-y-4">
-      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex items-center justify-center gap-2 sm:gap-4">
-          <Button variant="outline" size="sm" @click="previousMonth">
-            <ChevronLeft class="h-4 w-4" />
-          </Button>
-          <h2 class="text-lg font-medium sm:text-xl">{{ currentMonthYear }}</h2>
-          <Button variant="outline" size="sm" @click="nextMonth">
-            <ChevronRight class="h-4 w-4" />
-          </Button>
-          <Button variant="outline" size="sm" @click="goToToday"> Today </Button>
-        </div>
-
-        <div class="flex items-center justify-center gap-1 sm:gap-2">
-          <Button
-            v-for="view in views"
-            :key="view.key"
-            :variant="currentView === view.key ? 'default' : 'outline'"
-            size="sm"
-            class="text-xs sm:text-sm"
-            @click="currentView = view.key"
-          >
-            {{ view.label }}
-          </Button>
-        </div>
-      </div>
-
-      <!-- Calendar Grid -->
-      <div class="overflow-hidden rounded-lg border">
-        <!-- Calendar Header -->
-        <div class="grid grid-cols-7 border-b bg-muted/50">
-          <div
-            v-for="day in weekDays"
-            :key="day"
-            class="p-2 text-center text-xs font-medium sm:p-3 sm:text-sm"
-          >
-            {{ day }}
-          </div>
-        </div>
-
-        <!-- Calendar Days -->
-        <div class="grid grid-cols-7">
-          <div
-            v-for="day in calendarDays"
-            :key="day.date"
-            class="relative min-h-[80px] border-b border-r p-1 sm:min-h-[120px] sm:p-2"
-            :class="{
-              'bg-muted/30': !day.isCurrentMonth,
-              'bg-blue-50 dark:bg-blue-950/20': day.isToday
-            }"
-          >
-            <!-- Day Number -->
-            <div class="mb-1 text-xs font-medium sm:text-sm">
-              {{ day.dayNumber }}
-            </div>
-
-            <!-- Events -->
-            <div class="space-y-0.5 sm:space-y-1">
-              <div
-                v-for="event in getEventsForDay(day.date)"
-                :key="event.id"
-                class="cursor-pointer rounded p-0.5 text-xs transition-colors sm:p-1"
-                :class="getEventColor(event.type)"
-                @click="selectEvent(event)"
-              >
-                <div class="truncate text-xs font-medium">{{ event.title }}</div>
-                <div class="hidden text-xs opacity-75 sm:block">{{ event.time }}</div>
-              </div>
-            </div>
-
-            <!-- Add Event Button -->
-            <Button
-              v-if="day.isCurrentMonth"
-              variant="ghost"
-              size="sm"
-              class="absolute bottom-0.5 right-0.5 h-5 w-5 p-0 opacity-0 transition-opacity hover:opacity-100 sm:bottom-1 sm:right-1 sm:h-6 sm:w-6"
-              @click="addEvent(day.date)"
-            >
-              <Plus class="h-3 w-3" />
-            </Button>
-          </div>
-        </div>
+      <div class="rounded-lg border bg-card">
+        <CustomCalendar
+          :events="events"
+          :current-date="currentDate"
+          @date-click="onDateClick"
+          @event-click="onEventClick"
+          @add-event="onAddEvent"
+          @previous-month="previousMonth"
+          @next-month="nextMonth"
+          @go-today="goToToday"
+        />
       </div>
     </section>
 
@@ -187,6 +117,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
+import CustomCalendar from '@/components/CustomCalendar.vue'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -200,19 +131,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/composables/useToast'
-import { ChevronLeft, ChevronRight, MoreHorizontal, Plus } from 'lucide-vue-next'
+import { MoreHorizontal } from 'lucide-vue-next'
 
 // Calendar state
 const currentDate = ref(new Date())
-const currentView = ref('month')
-
-const views = [
-  { key: 'month', label: 'Month' },
-  { key: 'week', label: 'Week' },
-  { key: 'day', label: 'Day' }
-]
-
-const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 // Events
 const events = ref([
@@ -256,39 +178,6 @@ const eventForm = ref({
 const { toast } = useToast()
 
 // Computed
-const currentMonthYear = computed(() => {
-  return currentDate.value.toLocaleDateString('en-US', {
-    month: 'long',
-    year: 'numeric'
-  })
-})
-
-const calendarDays = computed(() => {
-  const year = currentDate.value.getFullYear()
-  const month = currentDate.value.getMonth()
-  const firstDay = new Date(year, month, 1)
-  const lastDay = new Date(year, month + 1, 0)
-  const startDate = new Date(firstDay)
-  startDate.setDate(startDate.getDate() - firstDay.getDay())
-
-  const days = []
-  const today = new Date()
-
-  for (let i = 0; i < 42; i++) {
-    const date = new Date(startDate)
-    date.setDate(startDate.getDate() + i)
-
-    days.push({
-      date: date.toISOString().split('T')[0],
-      dayNumber: date.getDate(),
-      isCurrentMonth: date.getMonth() === month,
-      isToday: date.toDateString() === today.toDateString()
-    })
-  }
-
-  return days
-})
-
 const upcomingEvents = computed(() => {
   const today = new Date()
   return events.value
@@ -310,10 +199,6 @@ const goToToday = () => {
   currentDate.value = new Date()
 }
 
-const getEventsForDay = (date: string) => {
-  return events.value.filter(event => event.date === date)
-}
-
 const getEventColor = (type: string) => {
   const colors = {
     meeting: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
@@ -329,6 +214,18 @@ const formatEventDate = (date: string) => {
     month: 'short',
     day: 'numeric'
   })
+}
+
+const onDateClick = (date: string) => {
+  addEvent(date)
+}
+
+const onEventClick = (event: any) => {
+  selectEvent(event)
+}
+
+const onAddEvent = (date: string) => {
+  addEvent(date)
 }
 
 const addEvent = (date: string) => {

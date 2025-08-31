@@ -42,7 +42,7 @@ const onOpenChange = (val: boolean) => {
 
       <div class="grid min-w-0 flex-1 grid-rows-[auto,1fr]">
         <header
-          class="border-b bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+          class="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90"
         >
           <div class="mx-4 flex h-14 items-center gap-3">
             <!-- opens/closes the off-canvas sidebar on mobile -->

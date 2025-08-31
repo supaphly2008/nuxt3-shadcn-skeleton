@@ -1,11 +1,13 @@
 <template>
   <Dialog v-model:open="open">
     <DialogContent class="max-w-screen h-full rounded-none md:h-[90%] md:w-[800px]">
-      <div class="relative flex h-full w-full flex-col overflow-hidden py-4">
+      <div class="relative flex h-full w-full flex-col overflow-hidden">
         <div v-if="!fileUrl" class="flex h-full items-center justify-center text-muted-foreground">
           No file to preview
         </div>
-        <PdfViewer v-else :source="fileUrl" />
+        <div v-else class="flex h-full w-full items-center justify-center">
+          <PdfViewer :source="fileUrl" />
+        </div>
       </div>
     </DialogContent>
   </Dialog>

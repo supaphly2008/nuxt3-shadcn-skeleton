@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto max-w-4xl space-y-6">
+  <div class="mx-auto max-w-4xl space-y-6 px-4 sm:px-0">
     <!-- Calendar Header -->
     <section class="space-y-2">
       <h1 class="text-2xl font-semibold">Calendar</h1>
@@ -8,24 +8,25 @@
 
     <!-- Calendar Controls -->
     <section class="space-y-4">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center justify-center gap-2 sm:gap-4">
           <Button variant="outline" size="sm" @click="previousMonth">
             <ChevronLeft class="h-4 w-4" />
           </Button>
-          <h2 class="text-xl font-medium">{{ currentMonthYear }}</h2>
+          <h2 class="text-lg font-medium sm:text-xl">{{ currentMonthYear }}</h2>
           <Button variant="outline" size="sm" @click="nextMonth">
             <ChevronRight class="h-4 w-4" />
           </Button>
           <Button variant="outline" size="sm" @click="goToToday"> Today </Button>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center justify-center gap-1 sm:gap-2">
           <Button
             v-for="view in views"
             :key="view.key"
             :variant="currentView === view.key ? 'default' : 'outline'"
             size="sm"
+            class="text-xs sm:text-sm"
             @click="currentView = view.key"
           >
             {{ view.label }}
@@ -34,10 +35,14 @@
       </div>
 
       <!-- Calendar Grid -->
-      <div class="rounded-lg border">
+      <div class="overflow-hidden rounded-lg border">
         <!-- Calendar Header -->
         <div class="grid grid-cols-7 border-b bg-muted/50">
-          <div v-for="day in weekDays" :key="day" class="p-3 text-center text-sm font-medium">
+          <div
+            v-for="day in weekDays"
+            :key="day"
+            class="p-2 text-center text-xs font-medium sm:p-3 sm:text-sm"
+          >
             {{ day }}
           </div>
         </div>
@@ -47,28 +52,28 @@
           <div
             v-for="day in calendarDays"
             :key="day.date"
-            class="relative min-h-[120px] border-b border-r p-2"
+            class="relative min-h-[80px] border-b border-r p-1 sm:min-h-[120px] sm:p-2"
             :class="{
               'bg-muted/30': !day.isCurrentMonth,
               'bg-blue-50 dark:bg-blue-950/20': day.isToday
             }"
           >
             <!-- Day Number -->
-            <div class="mb-1 text-sm font-medium">
+            <div class="mb-1 text-xs font-medium sm:text-sm">
               {{ day.dayNumber }}
             </div>
 
             <!-- Events -->
-            <div class="space-y-1">
+            <div class="space-y-0.5 sm:space-y-1">
               <div
                 v-for="event in getEventsForDay(day.date)"
                 :key="event.id"
-                class="cursor-pointer rounded p-1 text-xs transition-colors"
+                class="cursor-pointer rounded p-0.5 text-xs transition-colors sm:p-1"
                 :class="getEventColor(event.type)"
                 @click="selectEvent(event)"
               >
-                <div class="truncate font-medium">{{ event.title }}</div>
-                <div class="text-xs opacity-75">{{ event.time }}</div>
+                <div class="truncate text-xs font-medium">{{ event.title }}</div>
+                <div class="hidden text-xs opacity-75 sm:block">{{ event.time }}</div>
               </div>
             </div>
 
@@ -77,7 +82,7 @@
               v-if="day.isCurrentMonth"
               variant="ghost"
               size="sm"
-              class="absolute bottom-1 right-1 h-6 w-6 p-0 opacity-0 transition-opacity hover:opacity-100"
+              class="absolute bottom-0.5 right-0.5 h-5 w-5 p-0 opacity-0 transition-opacity hover:opacity-100 sm:bottom-1 sm:right-1 sm:h-6 sm:w-6"
               @click="addEvent(day.date)"
             >
               <Plus class="h-3 w-3" />
@@ -94,26 +99,26 @@
         <p class="text-sm text-muted-foreground">Your next scheduled events and deadlines.</p>
       </div>
 
-      <div class="grid gap-3">
+      <div class="space-y-3">
         <div
           v-for="event in upcomingEvents"
           :key="event.id"
           class="flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted/50"
           @click="selectEvent(event)"
         >
-          <div class="flex items-center gap-3">
+          <div class="flex min-w-0 flex-1 items-center gap-3">
             <div
-              class="h-3 w-3 rounded-full"
+              class="h-3 w-3 flex-shrink-0 rounded-full"
               :class="getEventColor(event.type).replace('bg-', 'bg-').replace('text-', '')"
             ></div>
-            <div>
-              <div class="font-medium">{{ event.title }}</div>
-              <div class="text-sm text-muted-foreground">
+            <div class="min-w-0 flex-1">
+              <div class="truncate font-medium">{{ event.title }}</div>
+              <div class="truncate text-sm text-muted-foreground">
                 {{ formatEventDate(event.date) }} at {{ event.time }}
               </div>
             </div>
           </div>
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" size="sm" class="flex-shrink-0">
             <MoreHorizontal class="h-4 w-4" />
           </Button>
         </div>
@@ -136,7 +141,7 @@
             <Input id="eventTitle" v-model="eventForm.title" placeholder="Event title" />
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div class="space-y-2">
               <Label for="eventDate">Date</Label>
               <Input id="eventDate" v-model="eventForm.date" type="date" />

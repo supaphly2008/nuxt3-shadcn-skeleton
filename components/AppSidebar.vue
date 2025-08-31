@@ -12,12 +12,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '@/components/ui/sidebar'
-import { Calendar, Home, Inbox, Search, Settings } from 'lucide-vue-next'
+import { Calendar, Home, Search, Settings } from 'lucide-vue-next'
 
 type Item = { label: string; to: `/${string}`; icon?: any }
 const items: Item[] = [
   { label: 'Home', to: '/', icon: Home },
-  { label: 'Inbox', to: '/inbox', icon: Inbox },
   { label: 'Calendar', to: '/calendar', icon: Calendar },
   { label: 'Search', to: '/search', icon: Search },
   { label: 'Settings', to: '/settings', icon: Settings }

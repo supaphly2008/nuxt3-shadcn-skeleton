@@ -366,7 +366,12 @@ const open = defineModel<boolean>('open', { required: true })
 const handleSubmit = (event: Event) => {
   event.preventDefault()
 
-  emit('submit', props.form.values)
+  // Use form's handleSubmit to ensure validation
+  props.form.handleSubmit(values => {
+    emit('submit', values)
+    // Close the form after successful submission
+    open.value = false
+  })()
 }
 
 const handleClose = () => {

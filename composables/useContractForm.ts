@@ -19,7 +19,7 @@ const formSchema = toTypedSchema(
     product: z.string().optional(),
     quantity: z.string().optional(),
     unitPrice: z.string().optional(),
-    totalAmount: z.string().nullable().optional(),
+    totalAmount: z.string().nullish(),
     origin: z.string().optional(),
     destination: z.string().optional(),
     insurance: z.string().optional(),
@@ -31,15 +31,15 @@ const formSchema = toTypedSchema(
     contractDate: z.string().optional(),
     commission: z.string().optional(),
     packaging: z.string().optional(),
-    documentsRequired: z.string().nullable().optional(),
+    documentsRequired: z.string().nullish(),
     EORINumber: z.string().optional(),
     specialNotes: z.string().optional(),
     bankDetails: z
       .object({
         beneficiary: z.string().optional(),
-        accountNo: z.string().nullable().optional(),
+        accountNo: z.string().nullish(),
         bank: z.string().optional(),
-        swift: z.string().nullable().optional()
+        swift: z.string().nullish()
       })
       .optional()
   })

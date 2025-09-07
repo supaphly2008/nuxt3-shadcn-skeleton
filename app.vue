@@ -3,10 +3,10 @@
     <NuxtPage />
 
     <!-- Global Toast Container -->
-    <Toaster />
+    <CustomToaster />
   </NuxtLayout>
 </template>
 
 <script setup>
-import Toaster from '@/components/Toaster.vue'
+import CustomToaster from '@/components/CustomToaster.vue'
 </script>

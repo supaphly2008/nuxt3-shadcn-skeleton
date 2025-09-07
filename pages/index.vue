@@ -83,8 +83,9 @@
     <ContractFormDialog
       v-model:open="isFormOpen"
       :form="form"
-      @submit="handleFormSubmit"
+      @submit="onHandleFormSubmit"
       @preview-file="openPreviewDialog"
+      @close="closeFormDialog"
     />
   </div>
 </template>
@@ -103,7 +104,8 @@ import FilePreviewDialog from '~/components/contract/FilePreviewDialog.vue'
 import FileUploadStep from '~/components/contract/FileUploadStep.vue'
 
 // Composables
-const { form } = useContractForm()
+const { form, updateFormData } = useContractForm()
+const formData = ref({})
 const { file, fileUrl, isExtractingFile, isDataExtracted, setFile, setExtractionState } =
   useFileUpload()
 const {
@@ -114,6 +116,7 @@ const {
   extractDataFromFile,
   generateDocument,
   handleFormSubmit,
+  closeFormDialog,
   setPreviewFileOpen,
   setFormOpen
 } = useContractWorkflow()
@@ -121,16 +124,27 @@ const {
 // Event Handlers
 const handleFileChange = (selectedFile: File) => {
   setFile(selectedFile)
+  // Clear previous form data when starting with a new file
+  formData.value = {}
   moveToStep(StepIndexEnum.ExtractData)
 }
 
+// Extract data from the file
 const extractData = async () => {
   if (stepIndex.value !== StepIndexEnum.ExtractData || !file.value) {
     return
   }
 
   setExtractionState(true)
-  const success = await extractDataFromFile(file.value, form.setValues)
+  // callback function to store the extracted data in formData upon success
+  const success = await extractDataFromFile(file.value, data => {
+    console.log('data', data)
+    // Merge extracted data with existing stored data (preserve manual edits)
+    formData.value = { ...formData.value, ...data }
+    console.log('Extracted data:', formData.value)
+    // Also update the form
+    updateFormData(formData.value)
+  })
   setExtractionState(false, success)
 }
 
@@ -139,10 +153,31 @@ const openPreviewDialog = () => {
 }
 
 const openFormDialog = () => {
+  // Populate form with stored form data if available
+  if (Object.keys(formData.value).length > 0) {
+    updateFormData(formData.value)
+  }
   setFormOpen(true)
+  console.log('Opening form with stored data:', formData.value)
 }
 
 const generateDoc = () => {
   generateDocument()
+}
+
+// Custom form submit handler that updates stored form data
+const onHandleFormSubmit = (values: any) => {
+  // Update the stored form data with the submitted values
+  formData.value = { ...values }
+  console.log('Form submitted, updating stored data:', formData.value)
+
+  // Call the workflow's form submit handler
+  handleFormSubmit(values)
+}
+
+// Function to clear stored form data (useful for resetting)
+const clearStoredData = () => {
+  formData.value = {}
+  form.resetForm()
 }
 </script>

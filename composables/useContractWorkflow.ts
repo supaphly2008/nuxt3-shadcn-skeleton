@@ -1,3 +1,5 @@
+// This composable manages the workflow steps and dialog states for the contract creation process,
+// including file upload, data extraction, and form submission.
 import { computed, readonly, ref } from 'vue'
 
 import { useToast } from '@/composables/useToast'
@@ -38,9 +40,10 @@ export function useContractWorkflow() {
       if (uploadError.value) {
         toast.error('Failed to extract data from file')
         return false
-      } else if (data.value) {
+      } else if (data && data.value && data.value.success) {
+        console.log('Extracted data:', data.value.data)
         toast.success('Data extracted successfully!')
-        updateFormData(data.value)
+        updateFormData(data.value.data)
         nextStep()
         return true
       }
@@ -54,7 +57,7 @@ export function useContractWorkflow() {
 
   const generateDocument = async () => {
     try {
-      const { data } = await useFetch<GenerateDocResponse>('http://localhost:3001/generate-doc', {
+      const { data } = await useFetch<GenerateDocResponse>('/api/generate-doc', {
         method: 'POST',
         body: {
           // TODO: Dummy data for demonstration
@@ -66,7 +69,7 @@ export function useContractWorkflow() {
       })
 
       if (data.value?.downloadUrl) {
-        window.open(`http://localhost:3001${data.value.downloadUrl}`, '_blank')
+        window.open(`/api${data.value.downloadUrl}`, '_blank')
         toast.success('Document generated successfully!')
         return true
       }
@@ -81,8 +84,13 @@ export function useContractWorkflow() {
   const handleFormSubmit = (values: ContractFormData) => {
     console.log('Form submitted:', values)
     toast.success('Contract details saved successfully!')
-    isFormOpen.value = false
+    // Don't close the dialog automatically - let the user decide
+    // isFormOpen.value = false
     // TODO: Add your form submission logic here
+  }
+
+  const closeFormDialog = () => {
+    isFormOpen.value = false
   }
 
   const openPreviewDialog = () => {
@@ -104,6 +112,7 @@ export function useContractWorkflow() {
     extractDataFromFile,
     generateDocument,
     handleFormSubmit,
+    closeFormDialog,
     openPreviewDialog,
     setPreviewFileOpen: (open: boolean) => (isPreviewFileOpen.value = open),
     setFormOpen: (open: boolean) => (isFormOpen.value = open)

@@ -6,7 +6,7 @@
         <Button variant="outline" size="sm" @click="previousMonth">
           <ChevronLeft class="h-4 w-4" />
         </Button>
-        <h2 class="text-lg font-semibold">{{ currentMonthYear }}</h2>
+        <h2 class="text-xl font-medium">{{ currentMonthYear }}</h2>
         <Button variant="outline" size="sm" @click="nextMonth">
           <ChevronRight class="h-4 w-4" />
         </Button>

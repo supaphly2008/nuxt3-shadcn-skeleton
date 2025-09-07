@@ -35,6 +35,12 @@ export interface GenerateDocResponse {
   [key: string]: any
 }
 
+export interface ExtractPdfResponse {
+  success: boolean
+  data: ContractFormData
+  cached?: boolean
+}
+
 export interface FileUploadState {
   file: File | null
   fileUrl: string | null

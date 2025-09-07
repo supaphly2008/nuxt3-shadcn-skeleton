@@ -21,7 +21,7 @@
     </div>
 
     <div v-else class="text-muted-foreground">
-      <p class="text-lg font-medium">📎 Drag & drop your PDF</p>
+      <p class="text-sm font-medium">📎 Drag & drop your PDF</p>
       <p class="text-sm text-gray-400">or click to select</p>
     </div>
   </div>

@@ -10,7 +10,7 @@
       @click="handleExtractClick"
     >
       <div class="text-muted-foreground">
-        <p class="flex items-center gap-2 text-lg font-medium">
+        <p class="flex items-center gap-2 text-sm font-medium">
           <span :class="isExtractingFile ? 'animate-spin' : ''">⌛️</span>
           {{ isExtractingFile ? 'Extracting data...' : 'Click to extract data' }}
         </p>
@@ -23,8 +23,8 @@
     <div class="flex">
       <Button
         @click="$emit('previewForm')"
-        :disabled="!isDataExtracted || !file"
         class="cursor-pointer disabled:cursor-not-allowed"
+        :disabled="!isDataExtracted || !file"
       >
         預覽表格
       </Button>

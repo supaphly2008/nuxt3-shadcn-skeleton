@@ -22,13 +22,13 @@
       <div class="flex flex-col gap-1">
         <StepperTitle
           :class="[state === 'active' && 'text-primary']"
-          class="text-sm font-semibold transition lg:text-base"
+          class="text-sm font-semibold transition"
         >
           {{ title }}
         </StepperTitle>
         <StepperDescription
           :class="[state === 'active' && 'text-primary']"
-          class="sr-only text-xs text-muted-foreground transition md:not-sr-only lg:text-sm"
+          class="sr-only text-xs text-muted-foreground transition md:not-sr-only"
         >
           {{ description }}
         </StepperDescription>

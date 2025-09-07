@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:open="open">
+  <Dialog v-model:open="open" @update:open="handleClose">
     <DialogContent class="max-w-screen h-full rounded-none md:h-[90%] md:w-[800px]">
       <div class="relative flex h-full w-full flex-col overflow-scroll pt-4">
         <form class="flex flex-col gap-8" @submit="handleSubmit">
@@ -324,6 +324,14 @@
 
           <!-- Form Actions -->
           <div class="sticky bottom-0 flex justify-end gap-4 border-t bg-background py-4">
+            <Button
+              type="button"
+              variant="outline"
+              @click="handleClose"
+              class="w-[100px] cursor-pointer"
+            >
+              Close
+            </Button>
             <Button type="submit" class="w-[100px] cursor-pointer">儲存</Button>
           </div>
         </form>
@@ -339,38 +347,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import type { FormContext } from 'vee-validate'
-
-interface ContractFormData {
-  buyerName?: string
-  buyerAddress?: string
-  buyerEmail?: string
-  sellerName?: string
-  sellerAddress?: string
-  product?: string
-  quantity?: string
-  unitPrice?: string
-  totalAmount?: string | null
-  origin?: string
-  destination?: string
-  insurance?: string
-  incoterms?: string
-  cropYear?: string
-  paymentTerms?: string
-  shipmentPeriod?: string
-  contractNumber?: string
-  contractDate?: string
-  commission?: string
-  packaging?: string
-  documentsRequired?: string | null
-  EORINumber?: string
-  specialNotes?: string
-  bankDetails?: {
-    beneficiary?: string
-    accountNo?: string | null
-    bank?: string
-    swift?: string | null
-  }
-}
+import type { ContractFormData } from '~/types/contract'
 
 interface Props {
   form: FormContext<ContractFormData>
@@ -378,7 +355,7 @@ interface Props {
 
 interface Emits {
   submit: [values: ContractFormData]
-  previewFile: []
+  close: []
 }
 
 const props = defineProps<Props>()
@@ -388,11 +365,12 @@ const open = defineModel<boolean>('open', { required: true })
 
 const handleSubmit = (event: Event) => {
   event.preventDefault()
-  // Use the form's handleSubmit method
-  const { handleSubmit: formHandleSubmit } = props.form
 
-  formHandleSubmit((values: ContractFormData) => {
-    emit('submit', values)
-  })()
+  emit('submit', props.form.values)
+}
+
+const handleClose = () => {
+  // Emit close event to parent component
+  emit('close')
 }
 </script>

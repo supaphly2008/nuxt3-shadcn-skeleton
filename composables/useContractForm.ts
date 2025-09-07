@@ -8,7 +8,12 @@ const formSchema = toTypedSchema(
   z.object({
     buyerName: z.string().optional(),
     buyerAddress: z.string().optional(),
-    buyerEmail: z.string().email().optional(),
+    buyerEmail: z
+      .string()
+      .optional()
+      .refine(val => !val || z.string().email().safeParse(val).success, {
+        message: 'Invalid email format'
+      }),
     sellerName: z.string().optional(),
     sellerAddress: z.string().optional(),
     product: z.string().optional(),

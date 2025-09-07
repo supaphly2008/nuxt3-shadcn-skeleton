@@ -12,7 +12,7 @@
         <Input
           v-model="searchQuery"
           placeholder="Search contracts, documents, or keywords..."
-          class="h-12 text-lg"
+          class="h-12 text-sm"
           @keyup.enter="performSearch"
         />
       </div>
@@ -75,7 +75,7 @@
     <!-- No Results -->
     <div v-else-if="hasSearched" class="py-12 text-center">
       <Search class="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-      <h3 class="mb-2 text-lg font-medium">No results found</h3>
+      <h3 class="mb-2 text-xl font-medium">No results found</h3>
       <p class="text-muted-foreground">
         Try adjusting your search terms or filters to find what you're looking for.
       </p>
@@ -83,7 +83,7 @@
 
     <!-- Recent Searches -->
     <div v-if="!hasSearched && recentSearches.length > 0" class="space-y-4">
-      <h3 class="text-lg font-medium">Recent Searches</h3>
+      <h3 class="text-xl font-medium">Recent Searches</h3>
       <div class="flex flex-wrap gap-2">
         <Button
           v-for="search in recentSearches"

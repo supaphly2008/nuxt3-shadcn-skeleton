@@ -14,6 +14,16 @@ export default defineNuxtConfig({
     host: '0.0.0.0'
   },
 
+  nitro: {
+    devProxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        prependPath: true
+      }
+    }
+  },
+
   runtimeConfig: {
     public: {
       apiBase: 'http://localhost:3001' // <--- your external backend
